@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electric Vehicle Energy Flow Simulator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Electric Vehicle Energy Flow Simulator</h1>
+            <p>Explore how energy flows from source to wheels in modern electric vehicles</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Left Sidebar - Vehicle Selection -->
+            <aside class="sidebar-left">
+                <h3>Vehicle Type</h3>
+                <div class="vehicle-selection">
+                    <div class="vehicle-option active" data-vehicle="car">
+                        <div class="vehicle-icon">🚗</div>
+                        <div class="vehicle-info">
+                            <h4>Electric Car</h4>
+                            <p>50-200 kW</p>
+                        </div>
+                    </div>
+                    <div class="vehicle-option" data-vehicle="train">
+                        <div class="vehicle-icon">🚆</div>
+                        <div class="vehicle-info">
+                            <h4>Electric Train</h4>
+                            <p>100-500 kW</p>
+                        </div>
+                    </div>
+                    <div class="vehicle-option" data-vehicle="bus">
+                        <div class="vehicle-icon">🚌</div>
+                        <div class="vehicle-info">
+                            <h4>Electric Bus</h4>
+                            <p>200-500 kW</p>
+                        </div>
+                    </div>
+                    <div class="vehicle-option" data-vehicle="truck">
+                        <div class="vehicle-icon">🚚</div>
+                        <div class="vehicle-info">
+                            <h4>Electric Truck</h4>
+                            <p>300-800 kW</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="system-selection">
+                    <h3>Energy Source</h3>
+                    <div class="energy-sources">
+                        <label class="radio-option">
+                            <input type="radio" name="energySource" value="battery" checked>
+                            <span class="radio-custom"></span>
+                            <span class="radio-label">Battery Storage</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="energySource" value="grid">
+                            <span class="radio-custom"></span>
+                            <span class="radio-label">Grid Electricity</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="energySource" value="hydrogen">
+                            <span class="radio-custom"></span>
+                            <span class="radio-label">Hydrogen Fuel Cell</span>
+                        </label>
+                    </div>
+
+                    <h3>Traction System</h3>
+                    <div class="traction-systems">
+                        <label class="radio-option">
+                            <input type="radio" name="tractionSystem" value="ac" checked>
+                            <span class="radio-custom"></span>
+                            <span class="radio-label">AC Motor</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="tractionSystem" value="dc">
+                            <span class="radio-custom"></span>
+                            <span class="radio-label">DC Motor</span>
+                        </label>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Central Area - Energy Flow Diagram -->
+            <section class="energy-flow-container">
+                <div class="diagram-header">
+                    <h3>Energy Flow Diagram</h3>
+                    <div class="mode-controls">
+                        <button class="btn btn--secondary" id="toggleComparison">Compare Mode</button>
+                        <button class="btn btn--outline" id="resetParams">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="diagram-wrapper">
+                    <div class="energy-diagram" id="mainDiagram">
+                        <svg id="energyFlowSvg" viewBox="0 0 800 300">
+                            <!-- Energy Source -->
+                            <g id="energySource" class="component-group">
+                                <rect x="20" y="120" width="80" height="60" class="component battery-source" rx="5"/>
+                                <text x="60" y="145" text-anchor="middle" class="component-label">Battery</text>
+                                <text x="60" y="160" text-anchor="middle" class="efficiency-label">95%</text>
+                            </g>
+
+                            <!-- Power Electronics -->
+                            <g id="powerElectronics" class="component-group">
+                                <rect x="150" y="120" width="80" height="60" class="component power-electronics" rx="5"/>
+                                <text x="190" y="145" text-anchor="middle" class="component-label">Power</text>
+                                <text x="190" y="155" text-anchor="middle" class="component-label">Electronics</text>
+                                <text x="190" y="170" text-anchor="middle" class="efficiency-label">96%</text>
+                            </g>
+
+                            <!-- Inverter/Controller -->
+                            <g id="inverterController" class="component-group">
+                                <rect x="280" y="120" width="80" height="60" class="component inverter" rx="5"/>
+                                <text x="320" y="145" text-anchor="middle" class="component-label">Inverter</text>
+                                <text x="320" y="155" text-anchor="middle" class="component-label">Controller</text>
+                                <text x="320" y="170" text-anchor="middle" class="efficiency-label">94%</text>
+                            </g>
+
+                            <!-- Motor -->
+                            <g id="motor" class="component-group">
+                                <rect x="410" y="120" width="80" height="60" class="component motor ac-motor" rx="5"/>
+                                <text x="450" y="145" text-anchor="middle" class="component-label">AC Motor</text>
+                                <text x="450" y="160" text-anchor="middle" class="efficiency-label">96%</text>
+                            </g>
+
+                            <!-- Transmission -->
+                            <g id="transmission" class="component-group">
+                                <rect x="540" y="120" width="80" height="60" class="component transmission" rx="5"/>
+                                <text x="580" y="145" text-anchor="middle" class="component-label">Transmission</text>
+                                <text x="580" y="160" text-anchor="middle" class="efficiency-label">96%</text>
+                            </g>
+
+                            <!-- Wheels -->
+                            <g id="wheels" class="component-group">
+                                <circle cx="700" cy="150" r="40" class="component wheels"/>
+                                <text x="700" y="155" text-anchor="middle" class="component-label">Wheels</text>
+                            </g>
+
+                            <!-- Energy Flow Arrows -->
+                            <g id="energyFlowArrows">
+                                <path d="M 100 150 L 150 150" class="flow-arrow" marker-end="url(#arrowhead)"/>
+                                <path d="M 230 150 L 280 150" class="flow-arrow" marker-end="url(#arrowhead)"/>
+                                <path d="M 360 150 L 410 150" class="flow-arrow" marker-end="url(#arrowhead)"/>
+                                <path d="M 490 150 L 540 150" class="flow-arrow" marker-end="url(#arrowhead)"/>
+                                <path d="M 620 150 L 660 150" class="flow-arrow" marker-end="url(#arrowhead)"/>
+                            </g>
+
+                            <!-- Loss Indicators -->
+                            <g id="lossIndicators">
+                                <text x="190" y="200" text-anchor="middle" class="loss-label">4% loss</text>
+                                <text x="320" y="200" text-anchor="middle" class="loss-label">6% loss</text>
+                                <text x="450" y="200" text-anchor="middle" class="loss-label">4% loss</text>
+                                <text x="580" y="200" text-anchor="middle" class="loss-label">4% loss</text>
+                            </g>
+
+                            <!-- Arrow marker definition -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                                        refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" class="arrow-marker"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+
+                    <!-- Comparison Diagram (Hidden by default) -->
+                    <div class="energy-diagram comparison-diagram hidden" id="comparisonDiagram">
+                        <svg id="comparisonFlowSvg" viewBox="0 0 800 300">
+                            <!-- Similar structure for comparison -->
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Overall Efficiency Display -->
+                <div class="efficiency-summary">
+                    <div class="efficiency-gauge">
+                        <h4>Overall System Efficiency</h4>
+                        <div class="gauge-container">
+                            <div class="efficiency-value" id="overallEfficiency">82%</div>
+                        </div>
+                    </div>
+                    <div class="performance-metrics">
+                        <div class="metric">
+                            <span class="metric-label">Energy Consumption</span>
+                            <span class="metric-value" id="energyConsumption">18.5 kWh/100km</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Estimated Range</span>
+                            <span class="metric-value" id="estimatedRange">450 km</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Sidebar - Controls and Results -->
+            <aside class="sidebar-right">
+                <h3>Operating Parameters</h3>
+                
+                <div class="parameter-control">
+                    <label for="speedSlider">Speed: <span id="speedValue">60</span> km/h</label>
+                    <input type="range" id="speedSlider" min="0" max="120" value="60" class="slider">
+                </div>
+
+                <div class="parameter-control">
+                    <label for="loadSlider">Load: <span id="loadValue">50</span>%</label>
+                    <input type="range" id="loadSlider" min="0" max="100" value="50" class="slider">
+                </div>
+
+                <div class="parameter-control">
+                    <label>Acceleration:</label>
+                    <div class="acceleration-buttons">
+                        <button class="btn btn--sm acceleration-btn" data-acceleration="low">Low</button>
+                        <button class="btn btn--sm acceleration-btn active" data-acceleration="medium">Medium</button>
+                        <button class="btn btn--sm acceleration-btn" data-acceleration="high">High</button>
+                    </div>
+                </div>
+
+                <div class="results-section">
+                    <h3>System Analysis</h3>
+                    
+                    <!-- Energy Loss Breakdown Chart -->
+                    <div class="chart-container" style="position: relative; height: 200px;">
+                        <canvas id="lossBreakdownChart"></canvas>
+                    </div>
+
+                    <!-- Component Details -->
+                    <div class="component-details" id="componentDetails">
+                        <h4>Component Information</h4>
+                        <p>Hover over diagram components to see details</p>
+                    </div>
+
+                    <!-- Educational Info -->
+                    <div class="educational-info" id="educationalInfo">
+                        <h4>Current Configuration</h4>
+                        <div class="config-summary">
+                            <div class="config-item">
+                                <strong>Energy Source:</strong> 
+                                <span id="currentEnergySource">Battery Storage</span>
+                            </div>
+                            <div class="config-item">
+                                <strong>Traction System:</strong> 
+                                <span id="currentTractionSystem">AC Motor</span>
+                            </div>
+                            <div class="config-advantages">
+                                <strong>Advantages:</strong>
+                                <ul id="configAdvantages">
+                                    <li>High efficiency</li>
+                                    <li>Zero direct emissions</li>
+                                    <li>Quiet operation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Tooltip -->
+        <div class="tooltip hidden" id="tooltip">
+            <div class="tooltip-content"></div>
+        </div>
+
+        <!-- Component Detail Modal -->
+        <div class="modal hidden" id="componentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">Component Details</h3>
+                    <button class="modal-close" id="modalClose">&times;</button>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
