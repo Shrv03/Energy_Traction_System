@@ -42,18 +42,6 @@ A modern, interactive educational tool to visualize and compare how energy trave
 
 ---
 
-## 👩‍💻 Contributing
-
-Pull requests are welcome! For major changes, please open an issue first to discuss what you’d like to change.
-
----
-
-## 📄 License
-
-[MIT](LICENSE)
-
----
-
 ## 🙌 Credits
 
 Curated with real engineering data from research on modern EV, fuel cell, and rail technologies.
